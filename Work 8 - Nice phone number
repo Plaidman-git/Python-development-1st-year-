@@ -1,0 +1,489 @@
+ phone_main.PY
+# Подключение собственных модулей по проверке номеров
+import phone_files
+import phone_proof
+
+# Главная функция реализует интерфейс с пользователем
+def main():
+    print("Программа проверки «красивых» телефонных номеров")
+    punkt = '0'
+    while(punkt != 'Q' and punkt != 'q'):
+        if punkt == '0':
+        # Вывод меню
+            print("\n0. Главное меню:", 
+"\nS. Поиск номеров от заданного",
+"\nC. Выполнить командную строку",
+"\nN. Проверка введенного номера",
+"\nD. Проверка диапазона номеров",
+"\nL. Вывести содержание директории",
+"\nG. Пакетная файловая обработка номеров",
+"\nF. Пакетная файловая обработка диапазонов",
+"\nQ. Завершить и выйти из программы")
+        # Выбор действия
+        elif punkt == 'S' or punkt == 's':  phone_proof.scanNumbers()        
+        elif punkt == 'N' or punkt == 'n':  phone_proof.checkNumber()
+        elif punkt == 'D' or punkt == 'd':  phone_proof.checkRanges()
+        elif punkt == 'G' or punkt == 'g':  phone_files.checkNumber()        
+        elif punkt == 'F' or punkt == 'f':  phone_files.checkRanges()
+        elif punkt == 'L' or punkt == 'l':  phone_files.Directories()
+        elif punkt == 'C' or punkt == 'c':  phone_files.callCommand()
+        else:
+            print("Такой команды нет")
+
+        # Выбор пункта
+        punkt = (input("Введите команду:>"))
+
+# Запуск главной функции
+if __name__ == '__main__':
+    main()
+
+phone_assay.PY
+# Функция проверки, что последовательность состоит из одинаковых цифр
+def isSameDigits(digits):
+    for i in range(1, len(digits)):
+        if digits[i] != digits[0]:
+            return False
+    return True
+
+# Функция проверки, что номер «эксклюзивный»
+def checkExclusive(number):
+    return isSameDigits(str(number))
+
+# Функция проверки, что последовательность состоит из подходящих цифр
+def areSuitableDigits(digits):
+    n = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    for i in range(1, len(digits)):
+        if digits[i] == "0":
+            n[0] += 1
+        elif digits[i] == "1":
+            n[1] += 1
+        elif digits[i] == "2":
+            n[2] += 1
+        elif digits[i] == "3":
+            n[3] += 1
+        elif digits[i] == "4":
+            n[4] += 1
+        elif digits[i] == "5":
+            n[5] += 1
+        elif digits[i] =="6":
+            n[6] += 1
+        elif digits[i] == "7":
+            n[7] += 1
+        elif digits[i] == "8":
+            n[8] += 1
+        elif digits[i] == "9":
+            n[9] += 1
+            
+    for i in range (0, 10):
+        for j in range (1, len(digits)):
+            if (int(digits[j])-1 <= int(n[i])):
+                return True
+    return False
+
+# Функция проверки, что номер «платиновый»
+def checkDiamond(number):
+    if areSuitableDigits(str(number)):
+        return True
+    else:
+        return False
+
+phone_proof.PY
+# Подключение собственного модуля по проверке телефонного номера
+from phone_assay import *
+            
+# Функция для ввода и проверки одного телефонного номера
+def checkNumber():
+    while True:
+        # Ввод номера с проверкой
+        number = input("Введите номер телефона [Пусто-Отмена]:>").strip()
+        # Если введена пустая строка, то отмена обработки
+        if number == "":
+            print("Завершение обработки номеров")
+            break
+            
+        # Проверка, что введенное значение состоит только из цифр
+        if not number.isdigit():
+            print("Ошибка: требуется ввести цифровое значение")
+            continue
+            
+        # Преобразование значения в число
+        number = int(number) 
+            
+        # Проверка номера на красивость
+        if checkExclusive(number):
+            print(number, " - это эксклюзивный номер")
+        elif checkDiamond(number):
+            print(number, " - это платиновый номер")
+        else:
+            print(number, " - это прочий номер")
+                    
+    print(chr(13)) 
+            
+# Функция для ввода и проверки диапазона телефонных номеров
+def checkRanges():
+    while True:
+        # Ввод левой границы диапазона номеров
+        start = input("Введите начальный номер [Пусто-Отмена]:>").strip()
+        # Если введена пустая строка, то отмена обработки
+        if start == "":
+            print("Завершение обработки диапазонов")
+            break
+                    
+        # Проверка, что введенное значение состоит только из цифр
+        if not start.isdigit():
+            print("Ошибка: требуется ввести цифровое значение")
+            continue
+                
+        # Ввод правой границы диапазона номеров
+        final = input("Введите конечный номер [Пусто-Отмена]:>").strip()
+        # Если введена пустая строка, то отмена обработки
+        if final == "": break
+            
+        # Проверка, что введенное значение состоит только из цифр
+        if not final.isdigit():
+            print("Ошибка: требуется ввести числовое значение")
+            continue
+                
+        # Цикл для перебора номеров внутри диапазона
+        print("Список платиновых номеров")
+        for number in range(int(start), int(final) + 1):
+            if checkDiamond(number):
+                print(number)
+
+    print(chr(13)) 
+            
+# Функция для ввода начального телефонного номера и поиска заданного количества «красивых» номеров, следующих после него
+def scanNumbers():
+    while True:
+            # Ввод начального номера
+            StartingNumber = input("Введите номер, от которого следует начать поиск [Пусто-Отмена]:>").strip()
+            # Если введена пустая строка, то отмена обработки
+            if StartingNumber == "":
+                print("Завершение поиска номеров по заданному")
+                break
+            	
+            # Проверка, что введенное значение состоит только из цифр
+            if not StartingNumber.isdigit():
+                print("Ошибка: требуется ввести цифровое значение")
+                continue
+            
+            # Ввод количества номеров для поиска
+            AmountOfNumbers = input("Введите количество номеров, которое следует найти [Пусто-Отмена]:>").strip()
+            # Если введена пустая строка или ноль, то отмена поиска значений
+            if (AmountOfNumbers == "") or (AmountOfNumbers == 0):
+                print("Завершение поиска поиска номеров по заданному")
+                break
+            
+            # Проверка, что введённое значение состоит только из цифр
+            if not AmountOfNumbers.isdigit():
+                print("Ошибка: требуется ввести цифровое значение")
+                continue
+            
+            # Цикл для поиска заданного количества «красивых» номеров
+            print("Список платиновых номеров")
+            amountOfNumbers = int(AmountOfNumbers)
+            startingNumber = int(StartingNumber)
+            NumbersFound = 0
+            while NumbersFound < amountOfNumbers:
+                if checkDiamond(startingNumber):
+                    print(startingNumber)
+                    NumbersFound = NumbersFound + 1
+                startingNumber = startingNumber + 1
+            	
+    print(chr(13))
+
+phone_files.PY
+# Подключение модуля работы со временем и модуля работы с файлами
+import time
+import os.path
+
+# Подключение собственного модуля по проверке телефонного номера
+import phone_assay
+
+# Функция определяет режимы доступа к файлу или папке
+# (R - на чтение, W - на запись, X - на исполнение)
+def checkAccess(filename):
+    filemode = ""
+    if os.access(filename, os.R_OK):  filemode += "R"
+    if os.access(filename, os.W_OK):  filemode += "W"
+    if os.access(filename, os.X_OK):  filemode += "X"
+    return filemode
+
+# Функция получает и печатает содержание директории
+def Directories():
+    # Получение пути к текущей директории
+    path = os.getcwd()
+    # Полагаем, что результат корректен
+    ok = True
+    # Цикл печати содержания директории
+    while ok:
+        print("Директория: ", path, ("[монтированная]" if os.path.ismount(path) else ""))
+    
+        # Получение содержания текущей директории
+        names = os.listdir(path)
+        names.sort()
+    
+        # Печать списка папок в текущей директории
+        for name in names:
+            # Формирование полного имени с путем
+            item = path + '\\' + name
+            # Проверка, что полное имя является папкой
+            if os.path.isdir(item):
+                # Получение даты и времени создания папки
+                when = time.ctime(os.path.getctime(item))
+                # Перевод имени папки в верхний регистр
+                name = name.upper()
+                # Печать информации о папке
+                print(name.ljust(40), (chr(32) * 7), when)
+            
+        # Печать списка файлов в текущей директории
+        for name in names:
+            # Формирование полного имени с путем
+            item = path + '\\' + name
+            # Проверка, что полное имя является файлом
+            if os.path.isfile(item):
+                # Получение размера файла в байтах
+                size = str(os.path.getsize(item))
+                # Получение даты и времени изменения файла
+                when = time.ctime(os.path.getmtime(item))
+                # Перевод имени файла в нижний регистр
+                name = name.lower()
+                # Разбиение имени на пару (имя - расширение)
+                pair = os.path.splitext(name)
+                # Печать информации о файле
+                print(pair[0].ljust(40), pair[1][1:].center(7), when, \
+                      size.rjust(12), checkAccess(item))
+
+        # Печать общей информации о директории
+        print("Всего имен: ", len(names), chr(13))
+        
+        # Полагаем, что результат не корректен, пока имя не введено
+        ok = False
+        # Цикл ввода имени директории
+        while not ok:
+            path = input("Введите имя директории [Пусто-Отмена]:>").strip()
+            # Если введена пустая строка, то отмена обработки и возврат
+            if path == "":
+                print("Завершение просмотра директорий")
+                break
+
+            # Проверка корректности имени директории
+            if not checkFilename(path):
+                print("Ошибка: имя директории не корректное")
+                continue
+
+            # Проверка существования директории
+            if not os.path.isdir(path):
+                print("Ошибка: такой директории не существует")
+                continue
+        
+            # Имя директории корректное и она существует
+            ok = True
+
+    print(chr(13))
+
+# Функция проверки имени файла на корректность
+# (True - имя корректно или False - имя ошибочное)
+def checkFilename(name):
+    # Проверить, что имя содержит букву диска
+    idx = name.find(":")
+    # Если имя содержит диск
+    if idx != -1:
+        # Проверить, что двоеточие является вторым символом
+        # и первым символом является латинская буква
+        if idx != 1 or name[0].upper() not in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":
+            return False
+    # Если буква диска с двоеточием находятся в начале имени 
+    # или имя не содержит буквы диска, то проверить на слеши
+    idx = name.count("\\\\")
+    # Если имя содержит двойные слеши
+    if idx > 0:
+        return False
+    # Проверить, что имя не заканчивается на слеш
+    if name.endswith("\\"):
+        return False
+    # Проверить, что имя не содержит запрещенных символов
+    for idx in name:
+        if idx in "\"<*?|>":
+            return False
+    return True
+
+# Функция для пакетной обработки списка диапазонов телефонных номеров из файла
+def checkRanges():
+    # Ввод имени исходного файла с перечнем диапазонов номеров
+    name = input("Введите имя исходного файла [Пусто-Отмена]:>").strip()
+    # Если введена пустая строка, то отмена обработки и возврат
+    if name == "": return
+
+    # Проверка корректности имени исходного файла
+    if not checkFilename(name):
+        print("Ошибка: имя исходного файла не корректное")
+        return
+    
+    # Проверка существования файла
+    if not os.path.exists(name):
+        print("Ошибка: файл с указанным именем не существует")
+        return
+
+    # Открытие исходного файла на чтение
+    try:
+        file = open(name, 'r')
+    except IOError:
+        print("Ошибка: невозможно открыть файл на чтение")
+        return
+
+    # Объявление переменной для списка диапазонов
+    data = []
+    # Чтение данных из исходного файла
+    data = file.read().split()
+    size = len(data)
+    print(data)
+
+    # Проверка на то, что файл не является пустым
+    if size == 0:
+        print("Ошибка: файл пустой (нет значений)")
+        return
+
+    # Проверка на то, что значения являются парными
+    if (size % 2) == 1:
+        print("Ошибка: файл должен содержать пары значений \n",
+              "[левая граница] пробел [правая граница]")
+        return
+
+    # Проверка на то, что считанные значения являются цифровыми
+    for i in range(size):
+        if data[i].isdigit():
+            data[i] = int(data[i])
+        else:
+            print("Ошибка: ", i + 1, "-е значение (", data[i], ") является некорректным")
+            return
+
+    # Закрытие исходного файла
+    file.close()
+
+    # Ввод имени результирующего файла
+    name = input("Введите имя результирующего файла [Пусто-Отмена]:>").strip()
+    # Если введена пустая строка, то отмена обработки и возврат
+    if name == "": return
+
+    # Проверка корректности имени результирующего файла
+    if not checkFilename(name):
+        print("Ошибка: имя результирующего файла не корректное")
+        return
+    
+    # Проверка отсутствия файла
+    if os.path.exists(name):
+        over = input("Файл уже существует. [W]-Перезаписать?>")
+        if over != 'W' and over != 'w':
+            return
+
+    # Открытие результирующего файла на запись
+    try:
+        file = open(name, 'w')
+    except IOError:
+        print("Ошибка: невозможно открыть файл на запись")
+        return
+
+    # Запись в результирующий файл
+    for i in range(0, size, 2):
+        # Получение границ очередного диапазона
+        file.write("Список gkfnbyjds[ номеров \nот " + str(data[i]) + \
+                   " до " + str(data[i+1]) + " >>\n")
+        # Обработка очередного диапазона
+        for number in range(data[i], data[i+1] + 1):
+            # Проверка номера из диапазона
+            if phone_assay.checkDiamond(number):
+                # Запись в файл «красивого» номера
+                file.write(str(number) + '\n')
+        file.write("Конец\n\n")
+
+    # Закрытие результирующего файла
+    file.close()
+    print("Обработка успешно завершена", chr(13))
+
+# Функция для пакетной обработки списка телефонных номеров из файла
+def checkNumber():
+    # Ввод имени исходного файла с перечнем диапазонов номеров
+    name = input("Введите имя исходного файла [Пусто-Отмена]:>").strip()
+    # Если введена пустая строка, то отмена обработки и возврат
+    if name == "": return
+
+    # Проверка корректности имени исходного файла
+    if not checkFilename(name):
+        print("Ошибка: имя исходного файла не корректное")
+        return
+    
+    # Проверка существования файла
+    if not os.path.exists(name):
+        print("Ошибка: файл с указанным именем не существует")
+        return
+
+    # Открытие исходного файла на чтение
+    try:
+        file = open(name, 'r')
+    except IOError:
+        print("Ошибка: невозможно открыть файл на чтение")
+        return
+
+    # Объявление переменной для списка диапазонов
+    data = []
+    # Чтение данных из исходного файла
+    data = file.read().split()
+    size = len(data)
+    print(data)
+
+    # Проверка на то, что файл не является пустым
+    if size == 0:
+        print("Ошибка: файл пустой (нет значений)")
+        return
+    # Проверка на то, что считанные значения являются цифровыми
+    for i in range(size):
+        if data[i].isdigit():
+            data[i] = int(data[i])
+        else:
+            print("Ошибка: ", i + 1, "-е значение (", data[i], ") является некорректным")
+            return
+
+    # Закрытие исходного файла
+    file.close()
+
+    # Ввод имени результирующего файла
+    name = input("Введите имя результирующего файла [Пусто-Отмена]:>").strip()
+    # Если введена пустая строка, то отмена обработки и возврат
+    if name == "": return
+
+    # Проверка корректности имени результирующего файла
+    if not checkFilename(name):
+        print("Ошибка: имя результирующего файла не корректное")
+        return
+    
+    # Проверка отсутствия файла
+    if os.path.exists(name):
+        over = input("Файл уже существует. [W]-Перезаписать?>")
+        if over != 'W' and over != 'w':
+            return
+
+    # Открытие результирующего файла на запись
+    try:
+        file = open(name, 'w')
+    except IOError:
+        print("Ошибка: невозможно открыть файл на запись")
+        return
+
+    # Запись в результирующий файл
+    file.write("Список платиновых номеров >>\n")
+    # Обработка списка номеров
+    for number in data:
+        # Проверка номера из списка
+        if phone_assay.checkDiamond(number):
+            # Запись в файл «красивого» номера
+            file.write(str(number) + '\n')
+    file.write("Конец\n\n")
+
+    # Закрытие результирующего файла
+    file.close()
+    print("Обработка успешно завершена", chr(13))
+
+def callCommand():
+    line = input("Введите текст командной строки:>")
+    os.system(line)
