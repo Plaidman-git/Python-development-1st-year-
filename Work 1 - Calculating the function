@@ -1,0 +1,32 @@
+# Подключение математической библиотеки
+import math
+
+# Вычисление функции f(u,t) по заданию
+def f(u,t):
+	if (t > u / 3): result = t**2+(t/2)
+	elif (t < u/3): result = t/2 + u**2
+	else: result = ((u + t)**2)/4
+	return result
+
+# Главная функция реализует ввод данных и вычисление функции z(x,y)
+def main():
+	Yes = 'да'
+	while Yes == 'да' or Yes == 'yes':
+		# Ввод значений
+		x = float(input('Введите X-значение:>'))
+		y = float(input('Введите Y-значение:>')) 
+		# Расчёт функции
+		z1 = f(math.tan(2*x), math.sin(y/3))
+		z2 = f(math.sqrt((x/y)**2 + math.acos((y**3)/(x**3))), math.log(y/3))
+		z3 = z1 + z2 + math.cos(f(math.exp(x/2)**(-2), math.sin(2*y)))
+		# Вывод результата
+		print('Результат: Z(', round(x, 2), ',', round(y, 2), ')=', round(z3, 2))
+		print('Z=', z3)
+		# Подтверждение ввода новых значений
+		Yes = input('Повторить ввод [да|yes]:>')
+		Yes = Yes.lower()
+		print()
+
+# Запуск главной функции
+if __name__ == '__main__':
+	main()
